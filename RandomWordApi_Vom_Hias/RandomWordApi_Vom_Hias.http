@@ -1,0 +1,6 @@
+@RandomWordApi_Vom_Hias_HostAddress = http://localhost:5093
+
+GET {{RandomWordApi_Vom_Hias_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
