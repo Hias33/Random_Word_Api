@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Npgsql;
 using RandomWordApi_Vom_Hias;
+using Newtonsoft.Json.Linq;
 
 namespace RandomWordApi_Vom_Hias.Data
 {
@@ -16,7 +17,10 @@ namespace RandomWordApi_Vom_Hias.Data
         public DataManager(IConfiguration pConfig) 
         {
             _config = pConfig;
-            connectionString = _config["Data:ConnectionStrings:randomWordDB"];
+            var secretsPath = Path.Combine(Directory.GetCurrentDirectory(), "secrets.json");
+            var json = File.ReadAllText(secretsPath);
+            var jsonObject = JObject.Parse(json);
+            connectionString = (string)jsonObject["Data"]["ConnectionStrings"]["randomWordDB"];
         }
 
         public async Task<Word> GetWords(string pTable, int pNumber, int minLength, int maxLength)
