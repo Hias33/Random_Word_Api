@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RandomWordApi_Vom_Hias.Data;
+﻿//intern:
 using RandomWordApi_Vom_Hias.Data.Interfaces;
+
+//extern:
+using Microsoft.AspNetCore.Mvc;
 
 namespace RandomWordApi_Vom_Hias.Controllers
 {
