@@ -56,10 +56,11 @@ namespace RandomWordApi_Vom_Hias.Data
 
         public async Task PutScore(string pDifficulty, int pScore)
         {
-            string query = $@"INSERT INTO {pDifficulty}_scores_db (Score) VALUES({pScore}";
+            string query = $@"INSERT INTO scores_{pDifficulty}_db (score) VALUES({pScore})";
 
             using (var connection = new NpgsqlConnection(connectionString))
             {
+                connection.Open();
                 try
                 {
                     using (var command = new NpgsqlCommand(query, connection))
