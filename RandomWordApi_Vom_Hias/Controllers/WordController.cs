@@ -14,28 +14,24 @@ namespace RandomWordApi_Vom_Hias.Controllers
         }
 
         [HttpGet(Name = "GetWord")]
-        public async Task<Word> GetWord(string lang, int number, int min, int max)
+        public async Task<Word> GetWord(string? lang = null, int? number = null, int? min = null, int? max = null)
         {
-            string table = "";
-            switch (lang)
+            string table = lang switch
             {
-                case "de":{
-                        table = "german_db";
-                        break;
-                    }
-                case "en":
-                    {
-                        table = "english_db";
-                        break;
-                    }
-                case "it":
-                    {
-                        table = "italian_db";
-                        break;
-                    }
-            }
-            return await _dataManager.GetWords(table, number, min, max);
+                "de" => "german_db",
+                "en" => "english_db",
+                "it" => "italian_db",
+                _ => "german_db" // Default fallback
+            };
+
+            int finalNumber = number ?? 1;
+            int finalMin = min ?? 1;
+            int finalMax = max ?? 100;
+            string finalLang = lang ?? "de";
+
+            return await _dataManager.GetWords(table, finalNumber, finalMin, finalMax);
         }
+
 
         private readonly IDataManager _dataManager;
     }
