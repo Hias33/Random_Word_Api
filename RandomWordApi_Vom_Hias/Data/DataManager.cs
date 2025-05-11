@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
+﻿//intern:
 using RandomWordApi_Vom_Hias.Data.Interfaces;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+
+//extern:
 using Npgsql;
-using RandomWordApi_Vom_Hias;
 using Newtonsoft.Json.Linq;
 
 namespace RandomWordApi_Vom_Hias.Data
@@ -16,7 +11,6 @@ namespace RandomWordApi_Vom_Hias.Data
     {
         public DataManager(IConfiguration pConfig) 
         {
-            _config = pConfig;
             var secretsPath = Path.Combine(Directory.GetCurrentDirectory(), "secrets.json");
             var json = File.ReadAllText(secretsPath);
             var jsonObject = JObject.Parse(json);
@@ -34,8 +28,7 @@ namespace RandomWordApi_Vom_Hias.Data
                     connection.Open();
                     Console.WriteLine("Verbindung zur Datenbank erfolgreich!");
 
-
-                        string query = $"SELECT wort FROM {pTable} WHERE LENGTH(wort) >= {minLength} AND LENGTH(wort) <= {maxLength} ORDER BY RANDOM() LIMIT {pNumber};";
+                    string query = $"SELECT wort FROM {pTable} WHERE LENGTH(wort) >= {minLength} AND LENGTH(wort) <= {maxLength} ORDER BY RANDOM() LIMIT {pNumber};";
 
                     using (var command = new NpgsqlCommand(query, connection))
                     {
@@ -61,7 +54,33 @@ namespace RandomWordApi_Vom_Hias.Data
             return new Word { words = words };
         }
 
+        public async Task PutScore(string pDifficulty, int pScore)
+        {
+            string query = $@"INSERT INTO {pDifficulty}_scores_db (Score) VALUES({pScore}";
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                try
+                {
+                    using (var command = new NpgsqlCommand(query, connection))
+                    {
+                        await command.ExecuteNonQueryAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ein Fehler ist aufgetreten: {ex.Message}");
+                }
+                finally
+                {
+                    connection.Close();
+                    Console.WriteLine("Score hinzugefügt.");
+                }
+            }
+        }
+
+       
+
         private readonly string connectionString;
-        private readonly IConfiguration _config;
     }
 }
